@@ -98,11 +98,14 @@
 		function addRecentVideo(url, videoId) {
 			var videoTitle = '';
 			var request = new XMLHttpRequest();
-			request.open('GET', 'https://www.googleapis.com/youtube/v3/videos?id=' + videoId + '&key=YOUR_API_KEY&part=snippet', true);
+			request.open('GET', 'https://www.youtube.com/watch?v=' + videoId, true);
 			request.onload = function() {
 				if (request.status >= 200 && request.status < 400) {
-					var response = JSON.parse(request.responseText);
-					videoTitle = response.items[0].snippet.title;
+					var response = request.responseText;
+					var startIndex = response.indexOf('<title>') + 7;
+					var endIndex = response.indexOf('</title>');
+					videoTitle = response.substring(startIndex, endIndex);
+					videoTitle = videoTitle.replace(' - YouTube', '');
 					var existingVideoIndex = -1;
 					for (var i = 0; i < recentVideos.length; i++) {
 						if (recentVideos[i].videoId == videoId) {
