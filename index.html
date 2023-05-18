@@ -124,7 +124,7 @@
 			}
 			getVideoTitle(videoId, function(title) {
 				recentVideos.unshift({url: url, videoId: videoId, title: title});
-				if (recentVideos.length > 5) {
+				if (recentVideos.length > 10) {
 					recentVideos.pop();
 				}
 				updateRecentVideos();
@@ -144,7 +144,7 @@
 				item.appendChild(thumbnail);
 				var link = document.createElement('a');
 				link.href = '#';
-				link.textContent = recentVideos[i].title;
+				link.innerHTML = recentVideos[i].title;
 				link.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				item.appendChild(link);
 				container.appendChild(item);
