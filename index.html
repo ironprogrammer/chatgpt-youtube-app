@@ -96,35 +96,37 @@
 			}
 		}
 		function addRecentVideo(url, videoId) {
-			var request = new XMLHttpRequest();
-			request.open('GET', 'https://www.youtube.com/watch?v=' + videoId, true);
-			request.onload = function() {
-				if (request.status >= 200 && request.status < 400) {
-					var response = request.responseText;
-					var parser = new DOMParser();
-					var doc = parser.parseFromString(response, 'text/html');
-					var videoTitle = doc.querySelector('title').textContent.replace(' - YouTube', '');
-					var existingVideoIndex = -1;
-					for (var i = 0; i < recentVideos.length; i++) {
-						if (recentVideos[i].videoId == videoId) {
-							existingVideoIndex = i;
-							break;
-						}
-					}
-					if (existingVideoIndex >= 0) {
-						recentVideos.splice(existingVideoIndex, 1);
-					}
-					recentVideos.unshift({url: url, videoId: videoId, title: videoTitle});
-					if (recentVideos.length > 5) {
-						recentVideos.pop();
-					}
-					updateRecentVideos();
-				}
-			};
-			request.onerror = function() {
-				console.error('Error loading video title');
-			};
-			request.send();
+		    var request = new XMLHttpRequest();
+		    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+		    request.open('GET', proxyUrl + 'https://www.youtube.com/watch?v=' + videoId, true);
+		    request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		    request.onload = function() {
+		        if (request.status >= 200 && request.status < 400) {
+		            var response = request.responseText;
+		            var parser = new DOMParser();
+		            var doc = parser.parseFromString(response, 'text/html');
+		            var videoTitle = doc.querySelector('title').textContent.replace(' - YouTube', '');
+		            var existingVideoIndex = -1;
+		            for (var i = 0; i < recentVideos.length; i++) {
+		                if (recentVideos[i].videoId == videoId) {
+		                    existingVideoIndex = i;
+		                    break;
+		                }
+		            }
+		            if (existingVideoIndex >= 0) {
+		                recentVideos.splice(existingVideoIndex, 1);
+		            }
+		            recentVideos.unshift({url: url, videoId: videoId, title: videoTitle});
+		            if (recentVideos.length > 5) {
+		                recentVideos.pop();
+		            }
+		            updateRecentVideos();
+		        }
+		    };
+		    request.onerror = function() {
+		        console.error('Error loading video title');
+		    };
+		    request.send();
 		}
 		function updateRecentVideos() {
 			var container = document.getElementById('recent-videos');
