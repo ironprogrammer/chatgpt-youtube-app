@@ -2,11 +2,22 @@
 <html>
 <head>
 	<title>YouTube API Example</title>
-	<script src="https://www.youtube.com/iframe_api"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-9v7U9E6Q2g6oBb6dGv0hC1zQ2YbJ0RfjxGZ8X9Z3qOg3/3eJmzB8f+0m0zY+J5m5" crossorigin="anonymous">
 	<style>
 		#player {
-			width: 640px;
-			height: 360px;
+			width: 100%;
+			height: 0;
+			padding-bottom: 56.25%;
+			position: relative;
+		}
+		#player iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
 		}
 		.recent-video {
 			display: flex;
@@ -19,31 +30,42 @@
 	</style>
 </head>
 <body>
-	<label for="url">YouTube URL:</label>
-	<input type="text" id="url" name="url" onclick="this.select()" onkeydown="if (event.keyCode == 13) loadVideo()">
-	<button onclick="loadVideo()">Load Video</button>
-	<div id="player"></div>
-	<select id="speed">
-		<option value="0.1">10%</option>
-		<option value="0.2">20%</option>
-		<option value="0.3">30%</option>
-		<option value="0.4">40%</option>
-		<option value="0.5">50%</option>
-		<option value="0.6">60%</option>
-		<option value="0.7">70%</option>
-		<option value="0.8">80%</option>
-		<option value="0.9">90%</option>
-		<option value="1" selected>100%</option>
-		<option value="1.1">110%</option>
-		<option value="1.2">120%</option>
-		<option value="1.3">130%</option>
-		<option value="1.4">140%</option>
-		<option value="1.5">150%</option>
-	</select>
-	<div>
-		Recent Videos:
-		<div id="recent-videos"></div>
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-8">
+				<div id="player"></div>
+				<select id="speed" class="form-select mt-3">
+					<option value="0.1">10%</option>
+					<option value="0.2">20%</option>
+					<option value="0.3">30%</option>
+					<option value="0.4">40%</option>
+					<option value="0.5">50%</option>
+					<option value="0.6">60%</option>
+					<option value="0.7">70%</option>
+					<option value="0.8">80%</option>
+					<option value="0.9">90%</option>
+					<option value="1" selected>100%</option>
+					<option value="1.1">110%</option>
+					<option value="1.2">120%</option>
+					<option value="1.3">130%</option>
+					<option value="1.4">140%</option>
+					<option value="1.5">150%</option>
+				</select>
+			</div>
+			<div class="col-md-4">
+				<label for="url" class="form-label">YouTube URL:</label>
+				<div class="input-group mb-3">
+					<input type="text" id="url" name="url" class="form-control" value="" onclick="this.select()" onkeydown="if (event.keyCode == 13) loadVideo()">
+					<button class="btn btn-primary" type="button" onclick="loadVideo()">Load Video</button>
+				</div>
+				<div>
+					Recent Videos:
+					<div id="recent-videos"></div>
+				</div>
+			</div>
+		</div>
 	</div>
+	<script src="https://www.youtube.com/iframe_api"></script>
 	<script>
 		var player;
 		var recentVideos = [];
