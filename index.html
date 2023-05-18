@@ -20,7 +20,9 @@
 	<div class="container mt-5">
 		<div class="row">
 			<div class="col-md-8">
-				<div id="player"></div>
+				<div class="ratio ratio-16x9">
+					<div id="player"></div>
+				</div>
 				<select id="speed" class="form-select mt-3">
 					<option value="0.1">10%</option>
 					<option value="0.2">20%</option>
@@ -126,6 +128,7 @@
 					recentVideos.pop();
 				}
 				updateRecentVideos();
+				saveRecentVideos();
 			});
 		}
 		function updateRecentVideos() {
