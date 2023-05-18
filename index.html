@@ -10,6 +10,7 @@
 			display: flex;
 			align-items: center;
 			margin-bottom: 10px;
+			cursor: pointer;
 		}
 		.recent-video img {
 			margin-right: 10px;
@@ -147,6 +148,7 @@
 				link.innerHTML = recentVideos[i].title;
 				link.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				item.appendChild(link);
+				item.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				container.appendChild(item);
 			}
 		}
