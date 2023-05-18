@@ -11,6 +11,9 @@
 	</style>
 </head>
 <body>
+	<label for="url">YouTube URL:</label>
+	<input type="text" id="url" name="url">
+	<button onclick="loadVideo()">Load Video</button>
 	<div id="player"></div>
 	<select id="speed">
 		<option value="0.1">10%</option>
@@ -33,7 +36,6 @@
 		var player;
 		function onYouTubeIframeAPIReady() {
 			player = new YT.Player('player', {
-				videoId: 'VIDEO_ID_HERE',
 				playerVars: {
 					'controls': 1,
 					'autoplay': 0,
@@ -49,6 +51,23 @@
 				var speed = parseFloat(this.value);
 				player.setPlaybackRate(speed);
 			});
+		}
+		function loadVideo() {
+			var url = document.getElementById('url').value;
+			var videoId = getVideoIdFromUrl(url);
+			if (videoId) {
+				player.loadVideoById(videoId);
+			} else {
+				alert('Invalid YouTube URL');
+			}
+		}
+		function getVideoIdFromUrl(url) {
+			var match = url.match(/[?&]v=([^&]+)/);
+			if (match) {
+				return match[1];
+			} else {
+				return null;
+			}
 		}
 	</script>
 </body>
