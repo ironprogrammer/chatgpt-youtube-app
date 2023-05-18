@@ -32,8 +32,14 @@
 		<option value="1.4">140%</option>
 		<option value="1.5">150%</option>
 	</select>
+	<div>
+		Recent Videos:
+		<ul id="recent-videos">
+		</ul>
+	</div>
 	<script>
 		var player;
+		var recentVideos = [];
 		function onYouTubeIframeAPIReady() {
 			player = new YT.Player('player', {
 				playerVars: {
@@ -61,15 +67,64 @@
 					}
 				}
 			});
+			loadRecentVideos();
+			loadLastVideo();
 		}
 		function loadVideo() {
 			var url = document.getElementById('url').value;
 			var videoId = getVideoIdFromUrl(url);
 			if (videoId) {
 				player.loadVideoById(videoId);
+				addRecentVideo(url, videoId);
+				saveRecentVideos();
 			} else {
 				alert('Invalid YouTube URL');
 			}
+		}
+		function loadLastVideo() {
+			var lastUrl = localStorage.getItem('lastUrl');
+			if (lastUrl) {
+				document.getElementById('url').value = lastUrl;
+				loadVideo();
+			}
+		}
+		function addRecentVideo(url, videoId) {
+			recentVideos.unshift({url: url, videoId: videoId});
+			if (recentVideos.length > 5) {
+				recentVideos.pop();
+			}
+			updateRecentVideos();
+		}
+		function updateRecentVideos() {
+			var list = document.getElementById('recent-videos');
+			list.innerHTML = '';
+			for (var i = 0; i < recentVideos.length; i++) {
+				var item = document.createElement('li');
+				var link = document.createElement('a');
+				link.href = '#';
+				link.textContent = recentVideos[i].url;
+				link.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
+				item.appendChild(link);
+				list.appendChild(item);
+			}
+		}
+		function createLoadVideoHandler(url) {
+			return function(event) {
+				event.preventDefault();
+				document.getElementById('url').value = url;
+				loadVideo();
+			}
+		}
+		function loadRecentVideos() {
+			var recentVideosJson = localStorage.getItem('recentVideos');
+			if (recentVideosJson) {
+				recentVideos = JSON.parse(recentVideosJson);
+				updateRecentVideos();
+			}
+		}
+		function saveRecentVideos() {
+			localStorage.setItem('recentVideos', JSON.stringify(recentVideos));
+			localStorage.setItem('lastUrl', recentVideos[0].url);
 		}
 		function getVideoIdFromUrl(url) {
 			var match = url.match(/[?&]v=([^&]+)/);
