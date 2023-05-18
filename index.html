@@ -51,6 +51,16 @@
 				var speed = parseFloat(this.value);
 				player.setPlaybackRate(speed);
 			});
+			document.addEventListener('keydown', function(event) {
+				if (event.keyCode == 32) {
+					event.preventDefault();
+					if (player.getPlayerState() == YT.PlayerState.PLAYING) {
+						player.pauseVideo();
+					} else {
+						player.playVideo();
+					}
+				}
+			});
 		}
 		function loadVideo() {
 			var url = document.getElementById('url').value;
