@@ -8,6 +8,14 @@
 			width: 640px;
 			height: 360px;
 		}
+		.recent-video {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+		.recent-video img {
+			margin-right: 10px;
+		}
 	</style>
 </head>
 <body>
@@ -34,8 +42,7 @@
 	</select>
 	<div>
 		Recent Videos:
-		<ul id="recent-videos">
-		</ul>
+		<div id="recent-videos"></div>
 	</div>
 	<script>
 		var player;
@@ -89,23 +96,52 @@
 			}
 		}
 		function addRecentVideo(url, videoId) {
-			recentVideos.unshift({url: url, videoId: videoId});
-			if (recentVideos.length > 5) {
-				recentVideos.pop();
-			}
-			updateRecentVideos();
+			var videoTitle = '';
+			var request = new XMLHttpRequest();
+			request.open('GET', 'https://www.googleapis.com/youtube/v3/videos?id=' + videoId + '&key=YOUR_API_KEY&part=snippet', true);
+			request.onload = function() {
+				if (request.status >= 200 && request.status < 400) {
+					var response = JSON.parse(request.responseText);
+					videoTitle = response.items[0].snippet.title;
+					var existingVideoIndex = -1;
+					for (var i = 0; i < recentVideos.length; i++) {
+						if (recentVideos[i].videoId == videoId) {
+							existingVideoIndex = i;
+							break;
+						}
+					}
+					if (existingVideoIndex >= 0) {
+						recentVideos.splice(existingVideoIndex, 1);
+					}
+					recentVideos.unshift({url: url, videoId: videoId, title: videoTitle});
+					if (recentVideos.length > 5) {
+						recentVideos.pop();
+					}
+					updateRecentVideos();
+				}
+			};
+			request.onerror = function() {
+				console.error('Error loading video title');
+			};
+			request.send();
 		}
 		function updateRecentVideos() {
-			var list = document.getElementById('recent-videos');
-			list.innerHTML = '';
+			var container = document.getElementById('recent-videos');
+			container.innerHTML = '';
 			for (var i = 0; i < recentVideos.length; i++) {
-				var item = document.createElement('li');
+				var item = document.createElement('div');
+				item.className = 'recent-video';
+				var thumbnail = document.createElement('img');
+				thumbnail.src = 'https://img.youtube.com/vi/' + recentVideos[i].videoId + '/default.jpg';
+				thumbnail.width = 120;
+				thumbnail.height = 90;
+				item.appendChild(thumbnail);
 				var link = document.createElement('a');
 				link.href = '#';
-				link.textContent = recentVideos[i].url;
+				link.textContent = recentVideos[i].title;
 				link.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				item.appendChild(link);
-				list.appendChild(item);
+				container.appendChild(item);
 			}
 		}
 		function createLoadVideoHandler(url) {
