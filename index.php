@@ -155,7 +155,6 @@ $api_key = $env['YT_API_KEY'];
 				link.innerHTML = recentVideos[i].title;
 				link.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				item.appendChild(link);
-				item.addEventListener('click', createLoadVideoHandler(recentVideos[i].url));
 				container.appendChild(item);
 			}
 		}
